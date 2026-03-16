@@ -256,9 +256,10 @@ async function setupHandLandmarker() {
     return state.handLandmarker;
   }
 
+  const baseUrl = import.meta.env.BASE_URL;
   const vision = {
-    wasmLoaderPath: "/mediapipe/vision_wasm_internal.js",
-    wasmBinaryPath: "/mediapipe/vision_wasm_internal.wasm"
+    wasmLoaderPath: `${baseUrl}mediapipe/vision_wasm_internal.js`,
+    wasmBinaryPath: `${baseUrl}mediapipe/vision_wasm_internal.wasm`
   };
 
   state.handLandmarker = await HandLandmarker.createFromOptions(vision, {
