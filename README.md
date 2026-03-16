@@ -1,36 +1,68 @@
 # Hand Gesture Autotune
 
-웹캠으로 손동작을 인식하고, 마이크 입력 음성을 손가락 접힘 상태에 따라 실시간으로 피치 변조하는 웹앱입니다.
+Web app prototype that reads hand gestures from a webcam and modulates live microphone input with pitch-shift style voice effects.
 
-## 동작 규칙
+## Links
 
-- 손을 다 펴면 기본 톤
-- 엄지 접힘: `-5 semitones`
-- 검지 접힘: `+3 semitones`
-- 중지 접힘: `+7 semitones`
-- 약지 접힘: `+10 semitones`
-- 소지 접힘: `+14 semitones`
-- 주먹: 강한 피치 이동 + 딜레이 + 왜곡 + 오토필터
+- Live demo: [https://frognation.github.io/Hand-Gesture-Autotune/](https://frognation.github.io/Hand-Gesture-Autotune/)
+- Repository: [https://github.com/frognation/Hand-Gesture-Autotune](https://github.com/frognation/Hand-Gesture-Autotune)
 
-여러 손가락을 동시에 접으면 각 손가락의 값이 합산됩니다.
+## Gesture Map
 
-## 실행
+- Open palm: dry / normal voice
+- Thumb closed: `-5 semitones`
+- Index closed: `+3 semitones`
+- Middle closed: `+7 semitones`
+- Ring closed: `+10 semitones`
+- Pinky closed: `+14 semitones`
+- Full fist: chaos mode with stronger delay, distortion, and filter motion
+
+Multiple closed fingers stack their pitch values together. Half-curled fingers contribute partial pitch movement.
+
+## Local Development
 
 ```bash
 npm install
 npm run dev
 ```
 
-브라우저에서 표시된 `localhost` 주소를 열고 카메라/마이크 권한을 허용하면 됩니다.
+Open the local Vite URL in the browser, then press `INIT`.
 
-## 사용 기술
+## Production Build
+
+```bash
+npm run build
+```
+
+The project is configured for GitHub Pages using the repository base path:
+
+- production base: `/Hand-Gesture-Autotune/`
+- deploy workflow: [.github/workflows/deploy.yml](.github/workflows/deploy.yml)
+
+## Stack
 
 - Vite
 - MediaPipe Tasks Vision `HandLandmarker`
 - Tone.js
 
-## 주의
+## Permissions
 
-- 마이크와 카메라는 `localhost` 또는 HTTPS 환경에서만 정상 동작합니다.
-- 현재 구현은 브라우저 기반 실시간 퍼포먼스용 프로토타입입니다.
-- 진짜 스튜디오급 오토튠처럼 음정 보정하는 구조가 아니라, 손동작 기반 실시간 피치 시프팅/이펙트 변조에 가깝습니다.
+- Camera and microphone require `localhost` or `HTTPS`.
+- Chrome/Safari may block microphone start until a direct user gesture happens on the page.
+- On macOS, browser-level permission is not enough if Camera or Microphone access is disabled in System Settings.
+
+## Troubleshooting
+
+- `CAMERA ONLINE` but no hand tracking:
+  MediaPipe WASM and model files must load successfully. On deployed builds, this depends on the correct GitHub Pages base path.
+- `MIC DENIED`:
+  Browser or OS microphone permission is blocked.
+- `MIC BUSY`:
+  Another app is already using the microphone.
+- `VID:1280x720 RS:4 live/EN`:
+  The camera stream is active and the video element is receiving frames.
+
+## Notes
+
+- This is a browser-based performance prototype, not studio-grade autotune.
+- The audio path is closer to live pitch shifting and effect modulation than to note-correction vocal processing.
